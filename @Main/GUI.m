@@ -84,6 +84,10 @@ axes(handles.axes1);
 base = transl(0,0,0); % establish a base
 
 % Plot Environment
+%% Plot Ingredients and Environment
+% [ingredient1 ingredient2 ingredient3, ...]= simulateEnvironment(ingredient1Pos, ingredient2Pos, ingredient3Pos, ...)
+% drawnow();
+% hold on
 
 % Load Robotic Arm: UR
 
