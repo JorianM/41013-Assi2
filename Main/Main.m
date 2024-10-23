@@ -14,6 +14,8 @@ Button2POS = [-0.55, 0.8, 1.35];
 Button3POS = [-1.05, 0.8, 1.35];
 workspace = [-2.5 2.5 -2 2 -0.02 5];
 scale =0.1;
+EStopPOS=[-2.15, -0.8, 1];
+FextPOS=[-2,-1.3,0.5];
 %Place Robots
         robot1 = UR3e();  % Initialize robot1 as UR3e
         robot2 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
@@ -31,4 +33,4 @@ scale =0.1;
         
 
 %load in environment.
-        [p1,s1,b1,b2,b3,b4,b5,b6] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS);
+        [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);

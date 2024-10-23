@@ -12,7 +12,7 @@ classdef Environment < handle
     end
     
     methods 
-        function [p1,s1,b1,b2,b3,b4,b5,b6] = simEnvironment(self,tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS)
+        function [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = simEnvironment(self,tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS)
         
      
         hold on;
@@ -123,6 +123,12 @@ classdef Environment < handle
         b6Scaled = b6centred * self.ButtonScale;  % Scale the rotated vertices
         b6Trans = b6Scaled + b6Pos;
         set(b6, 'Vertices', b6Trans);
+
+%place Estop
+        e1 = PlaceObject('emergencyStopButton.ply', EStopPOS);
+
+%place Fireextinguisher
+        f1 = PlaceObject('fireExtinguisher.ply', FextPOS);
         
 
         end
