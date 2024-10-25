@@ -51,12 +51,37 @@ hold on;
 robot1 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
 hold on;
 
+qC = robot1.model.getpos()
+% TC = transl(eye(4))*trotx(pi)*troty(0)*trotz(0)
+% base = robot1.model.fkineUTS(qC)
+base2 = robot1.model.fkineUTS(qC)
+% base = wrapToPi(robot1.model.ikcon(TC));
+
+% Define a base transformation with a translation and rotation
+baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
+
+% Apply transformations directly to both fingers
+finger = RG2Finger(baseTransform);                     % Transformation for finger1
+mFinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for finger2, rotated 180° around z-axis
+
+% % Take the base of end-effector 
+% qNow = r.model.getpos();
+% base = r.model.fkineUTS(qNow);
+% 
+% 
+% %Call the gripper with 2 fingers and plot the calculated base 
+% finger1 = LinearFinger(base*trotx(pi/2)); 
+% 
+% finger2 = LinearFinger(base*troty(pi)*trotx(-pi/2));
+
+
 %% Ikcon values to manipulate the arms position
 % toShakerAvoidTable = deg2rad([0 0 0 -90 0 90 0]);
 
 %% Move to Shaker
 qTj = Control.CreateTrajectory(robot1,ShakerGrabPOS);%,toShakerAvoidTable);
-Control.moveToPos(robot1,qTj);
+% Control.moveToPos(robot1,qTj);
+Control.moveToPos(robot1,qTj,finger,mFinger);
 
 %% Grab Shaker and move to default position
 % Calculate move to Standing Position

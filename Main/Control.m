@@ -45,25 +45,88 @@ classdef Control < handle
         end
     
         function qT = CreateTrajectory(rbt,objPos) %,armManipulate)
-            steps = 100;
+            steps = 200;%100
             q = rbt.model.getpos();
-            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
+            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
             q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
             qT = jtraj(q,q2,steps);
 
         end
-    
-        function  moveToPos(rbt,qTj)
+        function  moveToPos(rbt,qTj,finger,mfinger)
 
-            for i = 1:size(qTj,1)
-                q = qTj(i,:);
+
+            q_f1_end = deg2rad([25, 0]);
+            q_f2_end = deg2rad([25, 0]);
+
+            % Get the initial positions for both fingers
+            q_f1_start = finger.model.getpos();
+            q_f2_start = mfinger.model.getpos();
+
+            % Generate the joint trajectories for each finger
+            q_f1_traj = jtraj(q_f1_start, q_f1_end, size(qTj, 1));
+            q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
+
+            % Loop over the main trajectory
+            for i = 1:size(qTj, 1)
+                q = qTj(i, :);
+
+                % Animate the robot model
                 rbt.model.animate(q);
-                pause(0.05)
-            end
+
+                % Compute the base transformation for the gripper fingers
+                base = rbt.model.fkineUTS(q);
+
+                % Set the transformed base for each finger and animate
+                finger.model.base = base * trotx(pi/2);
+                finger.model.animate(q_f1_traj(i, :));
+
+                mfinger.model.base = base * troty(pi) * trotx(-pi/2);
+                mfinger.model.animate(q_f2_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
 
         end
+        % function  moveToPos(rbt,qTj)
+        % 
+        % 
+        %     for i = 1:size(qTj,1)
+        %         q = qTj(i,:);
+        %         rbt.model.animate(q);
+        % 
+        %         pause(0.05)
+        %     end
+        % 
+        % end
+%         function moveToPos(rbt, qTj)
+%     % Define the initial base transformation for the fingers
+%     fingerBaseTransform = transl(0, 0, 0.1) * trotz(pi/2);
+% 
+%     % Initial positions for fingers, assuming rbt.model.fkine(qTj(1,:)) is a 4x4 matrix
+%     finger = RG2Finger(eye(4));  % Initialize with identity to avoid transformation conflicts
+%     mFinger = RG2Finger(eye(4));
+% 
+%     for i = 1:size(qTj, 1)
+%         q = qTj(i, :);
+%         rbt.model.animate(q);
+% 
+%         % Calculate current end-effector transformation matrix
+%         endEffectorTransform = rbt.model.fkine(q);
+% 
+%         % Apply the base transformations to the fingers
+%         finger.model.base = endEffectorTransform * fingerBaseTransform;
+%         mFinger.model.base = endEffectorTransform * fingerBaseTransform * trotz(pi);
+% 
+%         % Animate fingers at their updated positions
+%         finger.model.animate(0);  % Single joint update if fingers are prismatic
+%         mFinger.model.animate(0);
+% 
+%         pause(0.05);
+%     end
+% end
+
     
     
     end
 end
-
+end
