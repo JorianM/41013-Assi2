@@ -53,8 +53,8 @@ hold on;
 
 qC = robot1.model.getpos()
 % TC = transl(eye(4))*trotx(pi)*troty(0)*trotz(0)
-% base = robot1.model.fkineUTS(qC)
-base2 = robot1.model.fkineUTS(qC)
+base = robot1.model.fkineUTS(qC)
+% base2 = robot1.model.fkineUTS(qC)
 % base = wrapToPi(robot1.model.ikcon(TC));
 
 % Define a base transformation with a translation and rotation

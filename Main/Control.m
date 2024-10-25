@@ -48,6 +48,7 @@ classdef Control < handle
             steps = 200;%100
             q = rbt.model.getpos();
             T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
+            % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
             q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
             qT = jtraj(q,q2,steps);
 
@@ -75,12 +76,13 @@ classdef Control < handle
 
                 % Compute the base transformation for the gripper fingers
                 base = rbt.model.fkineUTS(q);
+                % baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
 
                 % Set the transformed base for each finger and animate
-                finger.model.base = base * trotx(pi/2);
+                finger.model.base = base;% * trotx(pi/2);
                 finger.model.animate(q_f1_traj(i, :));
 
-                mfinger.model.base = base * troty(pi) * trotx(-pi/2);
+                mfinger.model.base = base * trotz(pi);% * troty(pi) * trotx(-pi/2);
                 mfinger.model.animate(q_f2_traj(i, :));
 
                 % Pause to create a smooth animation
