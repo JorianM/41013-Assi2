@@ -41,7 +41,7 @@ UR_default = [-1, 0, 1.35];
 StandPOS = [-0.55, 0, 1.35];
 HandoffPos = [0.16, 0 , 1.96];
 PourPos = [0.2, -2, 1.2];
-
+JakPos0 = [0.16,0,2.4];
 JakPos1 = [0.4,-0.22,2.43];
 JakPos2 = [-0.4,-0.22,2.43];
 %%  Plot environment.
@@ -188,13 +188,58 @@ end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 
-%% Move shaker Robot 2
-qTj = Control.CreateTrajectory(robot2, JakPos1,steps_short);
-
-% Control.moveToPos(robot1,qTj);
+%% Move to Handoff R2
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos0,steps_short);
 Control.moveToPosShaking(robot2,qTj,shakerHand);
 %% Move shaker Robot 2
-qTj = Control.CreateTrajectory(robot2, JakPos2,steps_short);
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
 
 % Control.moveToPos(robot1,qTj);
-Control.moveToPosShaking(robot2,qTj,shakerHand);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move shaker Robot 2
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
+
+% Control.moveToPos(robot1,qTj);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move shaker Robot 2
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
+
+% Control.moveToPos(robot1,qTj);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move shaker Robot 2
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
+
+% Control.moveToPos(robot1,qTj);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to Handoff R2
+qTj = Control.CreateTrajectoryShaking(robot2, JakPos0,steps_short);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+
+%% Move to glass
+qTj = Control.CreateTrajectory(robot1, GlassPOS,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
