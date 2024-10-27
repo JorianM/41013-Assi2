@@ -15,7 +15,7 @@ Jak_OS1 =1.0; %Jaka Zu offset
 
 steps_long=200;
 steps_short=100;
-
+v_short=20;
 %Environment Vairables
 tablePOS=[-0.4,0,0];
 Bottle1POS=[0, 0.8, 2];
@@ -198,7 +198,7 @@ qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
@@ -207,7 +207,7 @@ qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
@@ -216,7 +216,7 @@ qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
@@ -225,14 +225,14 @@ qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Handoff R2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos0,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerhand);
+s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 
 %% Move to glass
