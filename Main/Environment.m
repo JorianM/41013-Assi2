@@ -34,7 +34,7 @@ classdef Environment < handle
         p1= PlaceObject('tableBrown2.1x1.4x0.5m.ply',tablePOS);
 
 %Place shaker
-        s1= PlaceObject('Shaker.ply',ShakerPOS);
+        s1= PlaceObject('ShakerBody.ply',ShakerPOS);
         s1verts = get(s1, 'Vertices');
         s1Pos = ShakerPOS;
         s1centred = s1verts - s1Pos;
@@ -137,44 +137,6 @@ classdef Environment < handle
         
 
         end
-
-%  function obj = Environment(inputArg1,inputArg2) % maybe do function [ingredient1 ingredient2 ingredient3, ...]= simulateEnvironment(ingredient1Pos, ingredient2Pos, ingredient3Pos, ...)
-%             %ENVIRONMENT Construct an instance of this class
-%             %   Detailed explanation goes here
-%             obj.Property1 = inputArg1 + inputArg2;
-%             %
-%             % draft functionality
-%             cla;
-%             hold on;
-% 
-%             % Ingredients
-%             % ingredients getting placed
-%             % ingredient1 = PlaceObject('vodka?.ply' ,ingredient1Pos);
-%             % .
-%             % .
-%             % .
-% 
-%             % Bar
-%             % Obj1 = PlaceObject('barrier1.5x0.2x1m.ply',[0,0.8,0]);
-% 
-%             % Safety
-%             % fireExtinguisherObj = PlaceObject('fireExtinguisher.ply',[2.2,2.2,0]);
-%             % eStopObj = PlaceObject('emergencyStopButton.ply', [0, 2.5, 1.2]);
-%             % barrierObj1 = PlaceObject('barrier1.5x0.2x1m.ply',[0,0.8,0]);
-% 
-%         end
-% 
-%         function outputArg = method1(obj,inputArg)
-%             %METHOD1 Summary of this method goes here
-%             %   Detailed explanation goes here
-%             outputArg = obj.Property1 + inputArg;
-%         end
-% 
-% 
-% disp("aaaaaAAAAAaaaarrrrg")
-% 
-
-
 end
 end
 

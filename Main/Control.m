@@ -44,8 +44,8 @@ classdef Control < handle
             
         end
     
-        function qT = CreateTrajectory(rbt,objPos) %,armManipulate)
-            steps = 200;%100
+        function qT = CreateTrajectory(rbt,objPos,steps) %,armManipulate)
+            %steps = 200;%100
             q = rbt.model.getpos();
             T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
             % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);

@@ -13,6 +13,9 @@ sz = 0.9;
 UR_OS1 = 0.3; %UR10 offset variable
 Jak_OS1 =1.0; %Jaka Zu offset
 
+steps_long=200
+steps_short=100
+
 %Environment Vairables
 tablePOS=[-0.4,0,0];
 Bottle1POS=[0, 0.8, 2];
@@ -31,7 +34,8 @@ FextPOS=[-2,-1.3,0.5];
 ShakerGrabPOS=[sx,sy,sz+UR_OS1];
 Mid1POS = [-0.30, 0.6, 1.35]; %positions between buttons
 Mid2POS = [-0.80, 0.6, 1.35];
-UR_default = [0, 0, 1.5]
+UR_default = [0, 0, 1.5];
+StandPOS = [-0.55, 0, 1.35];
 HandoffPos = [0.16, 0 , 1.96];
 PourPos = [0.2, -2, 1.2]
 
@@ -71,7 +75,7 @@ baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
 
 % Apply transformations directly to both fingers
 finger = RG2Finger(baseTransform);                     % Transformation for finger1
-mFinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for finger2, rotated 180° around z-axis
+mfinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for finger2, rotated 180° around z-axis
 
 % % Take the base of end-effector 
 % qNow = r.model.getpos();
@@ -88,23 +92,20 @@ mFinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for fin
 % toShakerAvoidTable = deg2rad([0 0 0 -90 0 90 0]);
 
 %% Move to Shaker
-qTj = Control.CreateTrajectory(robot1,ShakerGrabPOS);%,toShakerAvoidTable);
+qTj = Control.CreateTrajectory(robot1,ShakerGrabPOS,steps_long);%,toShakerAvoidTable);
 % Control.moveToPos(robot1,qTj);
-Control.moveToPos(robot1,qTj,finger,mFinger);
+Control.moveToPos(robot1,qTj,finger,mfinger);
 
 %% Grab Shaker and move to default position
 % Calculate move to Standing Position
-qi = [-0.55, -0.5, 2];
-qTj = Control.CreateTrajectory(robot1, qi);
-
+qTj = Control.CreateTrajectory(robot1, StandPOS,steps_long);
 %Delete the initial brick
 try delete(s1);
 catch ME
 end
-
 s1NewPos = Control.PlotShaker(robot1,qTj);
-s1 = PlaceObject('Shaker.ply', transl(s1NewPos));
-% 
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+
 % %Place brick
 % 
 % qTj = Control.CreateTrajectory(r, Button1POS);
@@ -123,8 +124,58 @@ s1 = PlaceObject('Shaker.ply', transl(s1NewPos));
 
 
 %% Move to Drink/Button 1
-qTj = Control.CreateTrajectory(robot1, Button1POS);
-Control.moveToPos(robot1,qTj);
-
-
-
+qTj = Control.CreateTrajectory(robot1, Button1POS,steps_long);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to midpoint1
+qTj = Control.CreateTrajectory(robot1, Mid1POS,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to Button2
+qTj = Control.CreateTrajectory(robot1, Button2POS,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to Midpoint2
+qTj = Control.CreateTrajectory(robot1, Mid2POS,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to Button 3
+qTj = Control.CreateTrajectory(robot1, Button3POS,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move back to midpoint
+qTj = Control.CreateTrajectory(robot1, UR_default,steps_long);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+%% Move to Handoff
+qTj = Control.CreateTrajectory(robot1, HandoffPos,steps_short);
+%Control.moveToPos(robot1,qTj,finger,mfinger);
+try delete(s1);
+catch ME
+end
+s1NewPos = Control.PlotShaker(robot1,qTj);
+s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
