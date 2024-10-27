@@ -2,18 +2,42 @@ classdef Control < handle
     properties
     end
     methods (Static)
-        function finalShakerPosition = PlotShaker(rbt, qTj)
+        function finalShakerPosition = PlotShaker(rbt, qTj,finger,mfinger)
             % Read the shaker mesh data in
-            [f, v, ~] = plyread('Shaker.ply', 'tri');
+            [f, v, ~] = plyread('ShakerBody.ply', 'tri');
 
             shakerMesh_h = []; % Initialize the handle for the shaker mesh
             finalShakerPosition = [];
+            q_f1_end = deg2rad([25, 0]);
+            q_f2_end = deg2rad([25, 0]);
+
+            % Get the initial positions for both fingers
+            q_f1_start = finger.model.getpos();
+            q_f2_start = mfinger.model.getpos();
+
+            % Generate the joint trajectories for each finger
+            q_f1_traj = jtraj(q_f1_start, q_f1_end, size(qTj, 1));
+            q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
 
 
             for i = 1:size(qTj, 1)
                 q = qTj(i, :);
                 rbt.model.animate(q);
+                base = rbt.model.fkineUTS(q);
+                % Set the transformed base for each finger and animate
+                finger.model.base = base;% * trotx(pi/2);
+                finger.model.animate(q_f1_traj(i, :));
 
+                mfinger.model.base = base * trotz(pi);% * troty(pi) * trotx(-pi/2);
+                mfinger.model.animate(q_f2_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
+     %     for i = 1:size(qTj,1)
+        %         q = qTj(i,:);
+        %         rbt.model.animate(q);
+        % 
+        %         pause(0.05)
                 % Get the current shaker position using forward kinematics
                 currentShakerPose = rbt.model.fkine(q);
 
@@ -32,6 +56,7 @@ classdef Control < handle
                 UpdatedPoints = [v(:,1) + shakerPosition(1), v(:,2) + shakerPosition(2), v(:,3) + shakerPosition(3)];
                 shakerMesh_h = trisurf(f, UpdatedPoints(:, 1), UpdatedPoints(:, 2), UpdatedPoints(:, 3), ...
                     'FaceColor', 'k', 'EdgeColor', 'none', 'EdgeLighting', 'none');
+
 
                 % Pause for smooth visualization
                 pause(0.05);

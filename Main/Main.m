@@ -103,7 +103,7 @@ qTj = Control.CreateTrajectory(robot1, StandPOS,steps_long);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 
 % %Place brick
@@ -129,7 +129,7 @@ qTj = Control.CreateTrajectory(robot1, Button1POS,steps_long);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to midpoint1
 qTj = Control.CreateTrajectory(robot1, Mid1POS,steps_short);
@@ -137,7 +137,7 @@ qTj = Control.CreateTrajectory(robot1, Mid1POS,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Button2
 qTj = Control.CreateTrajectory(robot1, Button2POS,steps_short);
@@ -145,7 +145,7 @@ qTj = Control.CreateTrajectory(robot1, Button2POS,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Midpoint2
 qTj = Control.CreateTrajectory(robot1, Mid2POS,steps_short);
@@ -153,7 +153,7 @@ qTj = Control.CreateTrajectory(robot1, Mid2POS,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Button 3
 qTj = Control.CreateTrajectory(robot1, Button3POS,steps_short);
@@ -161,7 +161,7 @@ qTj = Control.CreateTrajectory(robot1, Button3POS,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move back to midpoint
 qTj = Control.CreateTrajectory(robot1, UR_default,steps_long);
@@ -169,7 +169,7 @@ qTj = Control.CreateTrajectory(robot1, UR_default,steps_long);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Handoff
 qTj = Control.CreateTrajectory(robot1, HandoffPos,steps_short);
@@ -177,5 +177,5 @@ qTj = Control.CreateTrajectory(robot1, HandoffPos,steps_short);
 try delete(s1);
 catch ME
 end
-s1NewPos = Control.PlotShaker(robot1,qTj);
+s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
