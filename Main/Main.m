@@ -7,27 +7,36 @@ env=Environment();% not really needed
 
 %% Set Positions
 % adjustment varibale
-sx = -0.5;
+sx = -0.5; %variables for shaker position
 sy = -0.6;
 sz = 0.9;
+UR_OS1 = 0.3; %UR10 offset variable
+Jak_OS1 =1.0; %Jaka Zu offset
 
-sz2 = 0.3;
-
-%Load variables
+%Environment Vairables
 tablePOS=[-0.4,0,0];
-ShakerPOS=[sx,sy,sz];
-ShakerGrabPOS=[sx,sy,sz+sz2];
 Bottle1POS=[0, 0.8, 2];
 Bottle2POS=[-0.5, 0.8, 2];
 Bottle3POS=[-1,0.8,2];
 Button1POS = [-0.05, 0.8, 1.35];
 Button2POS = [-0.55, 0.8, 1.35];
 Button3POS = [-1.05, 0.8, 1.35];
+ShakerPOS=[sx,sy,sz];
 % workspace = [-2.5 2.5 -2 2 -0.02 5];
 % scale =0.1;
 EStopPOS=[-2.15, -0.8, 1];
 FextPOS=[-2,-1.3,0.5];
 
+%Robot Pos
+ShakerGrabPOS=[sx,sy,sz+UR_OS1];
+Mid1POS = [-0.30, 0.6, 1.35]; %positions between buttons
+Mid2POS = [-0.80, 0.6, 1.35];
+UR_default = [0, 0, 1.5]
+HandoffPos = [0.16, 0 , 1.96];
+PourPos = [0.2, -2, 1.2]
+
+JakPos1 = [0.4,-0.22,2.43]
+JakPos2 = [-0.4,-0.22,2.43]
 %%  Plot environment.
 % [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
 [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = Environment.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
