@@ -16,9 +16,9 @@ classdef ShakerHand < RobotBaseClass
             self.PlotAndColourRobot();         
         end
         function CreateModel(self)   
-            link(1) = Link('d',0,'a',0,'alpha',pi/2,'qlim',deg2rad([0 0]),'offset',pi/2);  
+            link(1) = Link('d',0,'a',-0,'alpha',0,'qlim',deg2rad([0 0]),'offset',0);  
             % link(1) = Link('d',0.2,'a',0.2,'alpha',0,'qlim',deg2rad([-15 15]),'offset',0); 
-            % link(2) = Link('d',0,'a',0,'alpha',0,'qlim',deg2rad([-15 15]),'offset',-pi/2);
+            link(2) = Link('d',0,'a',0,'alpha',0,'qlim',deg2rad([-15 15]),'offset',0);
             self.model = SerialLink(link,'name',self.name);
             % self.model.plotopt = {'noshadow','noarrow','noshading','nowrist','nojaxes'};
         end
