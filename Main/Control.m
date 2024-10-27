@@ -114,6 +114,7 @@ classdef Control < handle
                 pause(0.02);
 
             end
+        end
             % function  moveToPos(rbt,qTj)
             %
             %
@@ -254,4 +255,4 @@ classdef Control < handle
         end
 
     end
-end
+

@@ -37,10 +37,10 @@ Mid2POS = [-0.80, 0.6, 1.35];
 UR_default = [0, 0, 1.5];
 StandPOS = [-0.55, 0, 1.35];
 HandoffPos = [0.16, 0 , 1.96];
-PourPos = [0.2, -2, 1.2]
+PourPos = [0.2, -2, 1.2];
 
-JakPos1 = [0.4,-0.22,2.43]
-JakPos2 = [-0.4,-0.22,2.43]
+JakPos1 = [0.4,-0.22,2.43];
+JakPos2 = [-0.4,-0.22,2.43];
 %%  Plot environment.
 % [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
 [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = Environment.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
@@ -58,6 +58,11 @@ robot2 = JakaZu3(transl(0,0,3)*troty(pi));  % Initialize robot1 as Jaka Zu 3
 % baseTransform1 = T1 * R1;
 % robot1.model.base = baseTransform1;
 hold on;
+qC = robot2.model.getpos();
+base = robot2.model.fkineUTS(qC);
+baseTransform = base * trotz(pi/2);
+shakerHand = ShakerHand(baseTransform);
+
 % axis(workspace);
 % robot1.model.plot(q_init_robot1, 'workspace', workspace, 'scale', scale);  % Ensure this is a column vector
 %%  Plot LinearUR10 Robot 1
@@ -179,3 +184,14 @@ catch ME
 end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+
+%% Move shaker Robot 2
+qTj = Control.CreateTrajectory(robot2, JakPos1,steps_short);
+
+% Control.moveToPos(robot1,qTj);
+Control.moveToPosShaking(robot2,qTj,shakerHand);
+%% Move shaker Robot 2
+qTj = Control.CreateTrajectory(robot2, JakPos2,steps_short);
+
+% Control.moveToPos(robot1,qTj);
+Control.moveToPosShaking(robot2,qTj,shakerHand);
