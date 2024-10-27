@@ -10,15 +10,17 @@ classdef Environment < handle
     end
     
     methods (Static)
-        function [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS)
-        workspace = [-5 5 -5 5 -0.02 4.5];
+        function [p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1] = simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
+        %workspace = [-5 5 -5 5 -0.02 4.5];
+        workspace =[-2.5 2.5 -2 2 -0.02 5];
         axis(workspace);
         cla;
         hold on;
         scale =0.1;
         BottleScale = 2.5;
         ButtonScale = 0.001;
-        
+        LightScale = 0.005;
+        GlassScale = 0.003;
         
 % Place Floor 
         f1 = imread('Woodflr.jpeg');
@@ -38,7 +40,7 @@ classdef Environment < handle
         s1verts = get(s1, 'Vertices');
         s1Pos = ShakerPOS;
         s1centred = s1verts - s1Pos;
-        s1RM = trotx(pi/2);  % Rotation by 90 degrees around Y-axis
+        s1RM = trotx(0,"deg");  % Rotation by 90 degrees around Y-axis
         s1Trans = (s1RM(1:3, 1:3) * s1centred')';
         s1Trans = s1Trans + s1Pos;
         set(s1, 'Vertices', s1Trans);
@@ -128,6 +130,43 @@ classdef Environment < handle
         b6Scaled = b6centred * ButtonScale;  % Scale the rotated vertices
         b6Trans = b6Scaled + b6Pos;
         set(b6, 'Vertices', b6Trans);
+
+%Place Light Curtains
+        L1 = PlaceObject('LightCurt.ply', LightCurt1POS);
+        L1verts = get(L1, 'Vertices');
+        L1Pos = LightCurt1POS;
+        L1centred = L1verts - L1Pos;
+        L1RM = trotz(pi/2);
+        stretchFactor1 = 3.7 / 0.75;
+        scalingMatrix1 = diag([LightScale,stretchFactor1 * LightScale, LightScale]);
+        L1Trans = (L1RM(1:3, 1:3) * (scalingMatrix1 * L1centred') )';
+        L1Trans = L1Trans + L1Pos;
+        set(L1, 'Vertices', L1Trans);
+
+        L2 = PlaceObject('LightCurt.ply', LightCurt2POS);
+        L2verts = get(L2, 'Vertices');
+        L2Pos = LightCurt2POS;
+        L2centred = L2verts - L2Pos;
+        L2RM = eye(3);
+        stretchFactor2 = 1.1 / 0.75;
+        scalingMatrix2 = diag([LightScale,stretchFactor2 * LightScale, LightScale]);
+        L2Trans = (L2RM(1:3, 1:3) * (scalingMatrix2 * L2centred') )';
+        L2Trans = L2Trans + L2Pos;
+        set(L2, 'Vertices', L2Trans);
+
+%Place Glass
+        g1 = PlaceObject('Glass.ply', GlassPOS);
+        g1verts = get(g1, 'Vertices');
+        g1Pos = GlassPOS;
+        g1centred = g1verts - g1Pos;
+        g1RM = trotx(pi/2);
+        g1centred_scaled = GlassScale * g1centred;  % Still n x 3
+        g1centred_scaled = [g1centred_scaled, ones(size(g1centred_scaled, 1), 1)];  % Convert to n x 4
+        g1Trans = (g1centred_scaled * g1RM')';
+        g1Trans = g1Trans(1:3, :)' + g1Pos; 
+        set(g1, 'Vertices', g1Trans);
+        
+
 
 %place Estop
         e1 = PlaceObject('emergencyStopButton.ply', EStopPOS);
