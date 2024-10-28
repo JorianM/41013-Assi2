@@ -1,9 +1,9 @@
-clear all;
-clf;
-clc;
+% clear all;
+% clf;
+% clc;
 
 %initiallise classes d
-env=Environment();% not really needed
+% env=Environment();% not really needed
 
 %% Set Positions
 % adjustment varibale
@@ -47,7 +47,7 @@ JakPos1 = [0.4,-0.22,2.43];
 JakPos2 = [-0.4,-0.22,2.43];
 %%  Plot environment.
 % [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
-[p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
+[p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1] = Environment.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
 drawnow();
 hold on
 

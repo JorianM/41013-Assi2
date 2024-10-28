@@ -86,7 +86,7 @@ classdef Control < handle
         function qT = CreateTrajectoryShaking(rbt,objPos,steps)
              %steps = 200;%100
             q = rbt.model.getpos();
-            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
+            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
             % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
             q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
             qT = jtraj(q,q2,steps);
