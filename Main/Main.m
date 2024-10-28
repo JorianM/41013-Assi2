@@ -45,6 +45,8 @@ PourPos = [0.2, -2, 1.2];
 JakPos0 = [0.16,0,2.4];
 JakPos1 = [0.4,-0.22,2.43];
 JakPos2 = [-0.4,-0.22,2.43];
+
+
 %%  Plot environment.
 % [p1,s1,b1,b2,b3,b4,b5,b6,e1,f1] = env.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,EStopPOS,FextPOS);
 [p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1] = Environment.simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
@@ -55,47 +57,26 @@ hold on
 %%  Plot Jaka Zu 3 Robot 2
 % robot1 = UR3e();  % Initialize robot1 as UR3e
 robot2 = JakaZu3(transl(0,0,3)*troty(pi));  % Initialize robot1 as Jaka Zu 3
-% Initialize q_init for robot1
-% q_init_robot1 = zeros(robot1.model.n);  % Joint configuration for robot1 as a column vector
-% R1 = troty(pi);  % Rotation matrix for 180 degrees around y-axis
-% T1 = transl(0, 0, 3);  % Translation matrix (up 3.5 units along z-axis)
-% baseTransform1 = T1 * R1;
-% robot1.model.base = baseTransform1;
+
 hold on;
 qC = robot2.model.getpos();
 base = robot2.model.fkineUTS(qC);
 baseTransform = base * trotz(pi/2);
 shakerHand = ShakerHand(baseTransform);
 
-% axis(workspace);
-% robot1.model.plot(q_init_robot1, 'workspace', workspace, 'scale', scale);  % Ensure this is a column vector
+
 %%  Plot LinearUR10 Robot 1
 robot1 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
 hold on;
 
 qC = robot1.model.getpos()
-% TC = transl(eye(4))*trotx(pi)*troty(0)*trotz(0)
 base = robot1.model.fkineUTS(qC)
-% base2 = robot1.model.fkineUTS(qC)
-% base = wrapToPi(robot1.model.ikcon(TC));
-
 % Define a base transformation with a translation and rotation
 baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
 
 % Apply transformations directly to both fingers
 finger = RG2Finger(baseTransform);                     % Transformation for finger1
 mfinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for finger2, rotated 180° around z-axis
-
-% % Take the base of end-effector 
-% qNow = r.model.getpos();
-% base = r.model.fkineUTS(qNow);
-% 
-% 
-% %Call the gripper with 2 fingers and plot the calculated base 
-% finger1 = LinearFinger(base*trotx(pi/2)); 
-% 
-% finger2 = LinearFinger(base*troty(pi)*trotx(-pi/2));
-
 
 %% Ikcon values to manipulate the arms position
 % toShakerAvoidTable = deg2rad([0 0 0 -90 0 90 0]);
@@ -114,23 +95,6 @@ catch ME
 end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
-
-% %Place brick
-% 
-% qTj = Control.CreateTrajectory(r, Button1POS);
-% %Delete the initial brick
-% try delete(b1);
-% catch ME
-% end
-% 
-% RobotMoveBrick.PlotBrick(r,qTj);
-% b1 = PlaceObject('HalfSizedRedGreenBrick.ply', brick1EndPos);
-% 
-% qf = [-0.2, 0, 2];
-% % Move to Standing Position
-% qTj = RobotTracjectory.CreateTrajectory(r, qf);
-% RobotToBrick.moveToBrickNoPos(r,qTj);
-
 
 %% Move to Drink/Button 1
 qTj = Control.CreateTrajectory(robot1, Button1POS,steps_long);

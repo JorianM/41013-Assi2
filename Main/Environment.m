@@ -14,6 +14,8 @@ classdef Environment < handle
         %workspace = [-5 5 -5 5 -0.02 4.5];
         workspace =[-2.5 2.5 -2 2 -0.02 5];
         axis(workspace);
+        view([43.5,17.35]);
+        camzoom(1);
         cla;
         hold on;
         scale =0.1;
