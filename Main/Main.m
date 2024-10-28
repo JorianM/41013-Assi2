@@ -13,8 +13,8 @@ sz = 0.9;
 UR_OS1 = 0.3; %UR10 offset variable
 Jak_OS1 =1.0; %Jaka Zu offset
 
-steps_long=200;
-steps_short=100;
+steps_long=60;
+steps_short=30;
 v_short=20;
 %Environment Vairables
 tablePOS=[-0.4,0,0];
@@ -34,7 +34,8 @@ EStopPOS=[-2.15, -0.8, 1];
 FextPOS=[-2,-1.3,0.5];
 
 %Robot Pos
-ShakerGrabPOS=[sx+0.2,sy+0.2,sz+0.1];
+% ShakerGrabPOS=[sx+0.2,sy,sz+0.1];
+ShakerGrabPOS=[sx,sy,sz];
 Mid1POS = [-0.30, 0.6, 1.35]; %positions between buttons
 Mid2POS = [-0.80, 0.6, 1.35];
 UR_default = [-1, 0, 1.35];
@@ -139,6 +140,7 @@ catch ME
 end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% s1 = PlaceObject('ShakerBody.ply', transl(Button1Pos));
 %% Move to midpoint1
 qTj = Control.CreateTrajectory(robot1, Mid1POS,steps_short);
 %Control.moveToPos(robot1,qTj,finger,mfinger);
