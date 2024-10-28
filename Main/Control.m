@@ -2,6 +2,10 @@ classdef Control < handle
     properties
     end
     methods (Static)
+    
+
+
+        
         function finalShakerPosition = PlotShaker(rbt, qTj,finger,mfinger)
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
