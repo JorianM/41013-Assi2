@@ -1,9 +1,10 @@
-% clear all;
-% clf;
-% clc;
+clear all;
+clf;
+clc;
 
 %initiallise classes d
 % env=Environment();% not really needed
+
 
 %% Set Positions
 % adjustment varibale
@@ -64,7 +65,6 @@ base = robot2.model.fkineUTS(qC);
 baseTransform = base * trotz(pi/2);
 shakerHand = ShakerHand(baseTransform);
 
-
 %%  Plot LinearUR10 Robot 1
 robot1 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
 hold on;
@@ -82,17 +82,31 @@ mfinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for fin
 % toShakerAvoidTable = deg2rad([0 0 0 -90 0 90 0]);
 
 %% Move to Shaker
-qTj = Control.CreateTrajectory(robot1,ShakerGrabPOS,steps_long);%,toShakerAvoidTable);
+qTj = Control.CreateTrajectory(robot1,ShakerGrabPOS,steps_long); %toShakerAvoidTable);
 % Control.moveToPos(robot1,qTj);
 Control.moveToPos(robot1,qTj,finger,mfinger);
 
 %% Grab Shaker and move to default position
 % Calculate move to Standing Position
 qTj = Control.CreateTrajectory(robot1, StandPOS,steps_long);
-%Delete the initial brick
 try delete(s1);
 catch ME
 end
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 
@@ -102,15 +116,49 @@ qTj = Control.CreateTrajectory(robot1, Button1POS,steps_long);
 try delete(s1);
 catch ME
 end
+
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 % s1 = PlaceObject('ShakerBody.ply', transl(Button1Pos));
 %% Move to midpoint1
 qTj = Control.CreateTrajectory(robot1, Mid1POS,steps_short);
-%Control.moveToPos(robot1,qTj,finger,mfinger);
+%e-stop check
+
+%ply file movement
 try delete(s1);
 catch ME
 end
+
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Button2
@@ -119,6 +167,22 @@ qTj = Control.CreateTrajectory(robot1, Button2POS,steps_short);
 try delete(s1);
 catch ME
 end
+
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Midpoint2
@@ -127,6 +191,22 @@ qTj = Control.CreateTrajectory(robot1, Mid2POS,steps_short);
 try delete(s1);
 catch ME
 end
+
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Button 3
@@ -135,10 +215,27 @@ qTj = Control.CreateTrajectory(robot1, Button3POS,steps_short);
 try delete(s1);
 catch ME
 end
+
+% for i = 1:length(qTj)
+%     if stopFlag
+%         disp('E-stop activated mid-movement. Halting robot operation.');
+%         return;
+%     end
+% s1NewPos = Control.PlotShaker(robot1, qTj(i, :), finger, mfinger);
+% %check for ply file and delete while moving
+%     if exist('s1', 'var')
+%         delete(s1);  % Delete old position if s1 exists
+%     end
+%     s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% 
+%     % Brief pause to simulate movement speed or avoid CPU overload
+%     pause(0.01);
+% end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
-%% Move back to midpoint
+%% Move back to midpoint --------
 qTj = Control.CreateTrajectory(robot1, UR_default,steps_long);
+
 %Control.moveToPos(robot1,qTj,finger,mfinger);
 try delete(s1);
 catch ME
@@ -147,6 +244,7 @@ s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Handoff
 qTj = Control.CreateTrajectory(robot1, HandoffPos,steps_short);
+
 %Control.moveToPos(robot1,qTj,finger,mfinger);
 try delete(s1);
 catch ME
@@ -159,7 +257,6 @@ qTj = Control.CreateTrajectoryShaking(robot2, JakPos0,steps_short);
 Control.moveToPosShaking(robot2,qTj,shakerHand);
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos1,steps_short);
-
 % Control.moveToPos(robot1,qTj);
 try delete(s1);
 catch ME
@@ -168,7 +265,6 @@ s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
-
 % Control.moveToPos(robot1,qTj);
 try delete(s1);
 catch ME
@@ -186,7 +282,6 @@ s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move shaker Robot 2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos2,steps_short);
-
 % Control.moveToPos(robot1,qTj);
 try delete(s1);
 catch ME
@@ -195,6 +290,7 @@ s1NewPos = Control.PlotShakerShaking(robot2,qTj,shakerHand);
 s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 %% Move to Handoff R2
 qTj = Control.CreateTrajectoryShaking(robot2, JakPos0,steps_short);
+
 try delete(s1);
 catch ME
 end
