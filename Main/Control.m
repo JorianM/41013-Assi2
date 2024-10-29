@@ -3,7 +3,8 @@ classdef Control < handle
     end
 
     methods (Static)
-        function finalShakerPosition = PlotShaker(rbt, qTj, finger, mfinger, currentValue)
+        function finalShakerPosition = PlotShaker(rbt, qTj, finger, mfinger)
+         global currentValue;
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
 
@@ -22,10 +23,11 @@ classdef Control < handle
 
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-                while currentValue == 1
-                    pause(0.1); % Wait until the value changes
-                end
-
+    if currentValue == 1
+        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+        pause(0.1);        % Small pause to reduce CPU load
+        continue;          % Skip the rest of this loop iteration
+    end
                 q = qTj(i, :);
                 rbt.model.animate(q);
                 base = rbt.model.fkineUTS(q);
@@ -67,7 +69,8 @@ classdef Control < handle
             end
         end
 
-        function moveToPos(rbt, qTj, finger, mfinger, currentValue)
+        function moveToPos(rbt, qTj, finger, mfinger)
+           global currentValue;
             q_f1_end = deg2rad([25, 0]);
             q_f2_end = deg2rad([25, 0]);
 
@@ -82,9 +85,11 @@ classdef Control < handle
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-                while currentValue == 1
-                    pause(0.1); % Wait until the value changes
-                end
+    if currentValue == 1
+        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+        pause(0.1);        % Small pause to reduce CPU load
+        continue;          % Skip the rest of this loop iteration
+    end
 
                 q = qTj(i, :);
                 % Animate the robot model
@@ -104,7 +109,8 @@ classdef Control < handle
             end
         end
 
-        function finalShakerPosition = PlotShakerShaking(rbt, qTj, shakerHand, currentValue)
+        function finalShakerPosition = PlotShakerShaking(rbt, qTj, shakerHand)
+           global currentValue;
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
 
@@ -120,9 +126,11 @@ classdef Control < handle
 
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-                while currentValue == 1
-                    pause(0.1); % Wait until the value changes
-                end
+    if currentValue == 1
+        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+        pause(0.1);        % Small pause to reduce CPU load
+        continue;          % Skip the rest of this loop iteration
+    end
 
                 q = qTj(i, :);
                 rbt.model.animate(q);
@@ -162,7 +170,8 @@ classdef Control < handle
             end
         end
 
-        function moveToPosShaking(rbt, qTj, shakerHand, currentValue)
+        function moveToPosShaking(rbt, qTj, shakerHand)
+            global currentValue;
             q_shaker_end = deg2rad([25, 0]);
 
             % Get the initial positions of the shaker hand
@@ -174,10 +183,11 @@ classdef Control < handle
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-                while currentValue == 1
-                    pause(0.1); % Wait until the value changes
-                end
-
+    if currentValue == 1
+        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+        pause(0.1);        % Small pause to reduce CPU load
+        continue;          % Skip the rest of this loop iteration
+    end
                 q = qTj(i, :);
                 % Animate the robot model
                 rbt.model.animate(q);

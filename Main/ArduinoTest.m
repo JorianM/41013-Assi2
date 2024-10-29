@@ -2,7 +2,7 @@ classdef ArduinoTest < handle
    
     properties
         SerialObj % Serial port object
-        currentValue
+
     end
     
     methods
@@ -36,28 +36,29 @@ classdef ArduinoTest < handle
         
         function readButtonData(obj, src, ~)
             % Callback function to read data from the serial port
-            global stopFlag;
+          %  global stopFlag;
             % Read the ASCII data
+            global currentValue;
             data = readline(src);
-            obj.currentValue = str2double(data); % Convert the received data to numeric
+            currentValue = str2double(data); % Convert the received data to numeric
             
             % Store the value in UserData
-            src.UserData.Data(end+1) = obj.currentValue;
+            src.UserData.Data(end+1) = currentValue;
             
             % Check for value change
-            if obj.currentValue ~= src.UserData.LastValue
-                src.UserData.LastValue = obj.currentValue; % Update last value
-                fprintf('Button State Changed: %d\n', obj.currentValue);
+            if currentValue ~= src.UserData.LastValue
+                src.UserData.LastValue = currentValue; % Update last value
+                fprintf('Button State Changed: %d\n', currentValue);
             end
             
-            if obj.currentValue ==1
-                stopFlag = true;  % Set the stop flag to true
+            if currentValue ==1
+             %   stopFlag = true;  % Set the stop flag to true
                 disp('stopflag true')
             else
-                stopFlag = false;
+             %   stopFlag = false;
             end
             % Print the current value
-            fprintf('Current Value: %d\n', obj.currentValue);
+            fprintf('Current Value: %d\n', currentValue);
         end
 
         
