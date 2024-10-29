@@ -1,11 +1,19 @@
 classdef Control < handle
     properties
+        arduinoEStop % Instance of ArduinoTest
     end
-    methods (Static)
-    
-
-
-        
+    methods
+        %Function 1 for Arduino: Constructor
+        function obj = Control(comPort, boardType, buttonPin, ledPin)
+            % Constructor: Initialize Arduino monitoring
+            obj.arduinoEStop = ArduinoTest(comPort, boardType, buttonPin, ledPin);
+            obj.arduinoEStop.startMonitoring(); % Start monitoring in the constructor
+        end
+        %Function 2 """; Destructor
+        function delete(obj)
+            obj.arduinoEStop.stopMonitoring(); % Ensure timer is stopped
+            delete(obj.arduinoEStop); % Delete Arduino object
+        end
         function finalShakerPosition = PlotShaker(rbt, qTj,finger,mfinger)
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
@@ -24,6 +32,10 @@ classdef Control < handle
             q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
 
             for i = 1:size(qTj, 1)
+                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
+                    disp('E-stop activated in PlotShaker. Halting movement.');
+                    return; % Exit the movement loop
+                end
                 % if app.Running
                 % if ~app.Running
                 %     break; % Exit loop if app is not running
@@ -47,10 +59,8 @@ classdef Control < handle
                 %         pause(0.05)
                 % Get the current shaker position using forward kinematics
                 currentShakerPose = rbt.model.fkine(q);
-
                 % Adjust shaker position
                 shakerPosition = transl(currentShakerPose);  % Extract translation part (x, y, z)
-
                 % Store the last Shaker position
                 finalShakerPosition = shakerPosition;
 
@@ -77,29 +87,7 @@ classdef Control < handle
 
         end
 
-        function qT = CreateTrajectory(rbt,objPos,steps) %,armManipulate)
-            % %steps = 200;%100
-            % q = rbt.model.getpos();
-            % T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
-            % % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
-            % q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
-            % qT = jtraj(q,q2,steps);
-
-            q = rbt.model.getpos();
-            R = eye(3);  % Identity rotation matrix
-            T = transl(objPos) * [R, [0; 0; 0]; 0 0 0 1];  % Homogeneous transformation
-            q2 = wrapToPi(rbt.model.ikcon(T));
-            qT = jtraj(q, q2, steps);
-        end
-        function qT = CreateTrajectoryShaking(rbt,objPos,steps)
-            %steps = 200;%100
-            q = rbt.model.getpos();
-            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
-            % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
-            q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
-            qT = jtraj(q,q2,steps);
-        end
-
+        
         function  moveToPos(rbt,qTj,finger,mfinger)
 
 
@@ -116,11 +104,14 @@ classdef Control < handle
 
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
-                q = qTj(i, :);
+                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
+                    disp('E-stop activated in moveToPos. Halting movement.');
+                    return; % Exit loop if E-stop is activated
+                end
 
+                q = qTj(i, :);
                 % Animate the robot model
                 rbt.model.animate(q);
-
                 % Compute the base transformation for the gripper fingers
                 base = rbt.model.fkineUTS(q);
                 % baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
@@ -156,6 +147,11 @@ classdef Control < handle
 
 
             for i = 1:size(qTj, 1)
+                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
+                    disp('E-stop activated in PlotShakerShaking. Halting movement.');
+                    return; % Exit the movement loop
+                end
+
                 q = qTj(i, :);
                 rbt.model.animate(q);
                 base = rbt.model.fkineUTS(q);
@@ -216,21 +212,21 @@ classdef Control < handle
 
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
-                q = qTj(i, :);
+                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
+                    disp('E-stop activated in moveToPosShaking. Halting movement.');
+                    return; % Exit loop if E-stop is activated
+                end
 
+                q = qTj(i, :);
                 % Animate the robot model
                 rbt.model.animate(q);
-
                 % Compute the base transformation for the gripper fingers
                 base = rbt.model.fkineUTS(q);
                 % baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
 
                 % Set the transformed base for each finger and animate
-
                 shakerHand.model.base = base;
                 shakerHand.model.animate(q_shaker_traj(i, :));
-
-
 
                 % Pause to create a smooth animation
                 pause(0.02);
@@ -239,7 +235,34 @@ classdef Control < handle
         end
 
     end
+    
+    methods (Static)
+    function qT = CreateTrajectory(rbt,objPos,steps) %,armManipulate)
+            % %steps = 200;%100
+            % q = rbt.model.getpos();
+            % T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
+            % % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
+            % q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
+            % qT = jtraj(q,q2,steps);
 
+            q = rbt.model.getpos();
+            R = eye(3);  % Identity rotation matrix
+            T = transl(objPos) * [R, [0; 0; 0]; 0 0 0 1];  % Homogeneous transformation
+            q2 = wrapToPi(rbt.model.ikcon(T));
+            qT = jtraj(q, q2, steps);
+        end
+
+        function qT = CreateTrajectoryShaking(rbt,objPos,steps)
+            %steps = 200;%100
+            q = rbt.model.getpos();
+            T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
+            % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
+            q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
+            qT = jtraj(q,q2,steps);
+        end
+
+
+    end
 end
 
 
