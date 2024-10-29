@@ -1,19 +1,222 @@
 classdef Control < handle
     properties
-        arduinoEStop % Instance of ArduinoTest
     end
-    methods
-        %Function 1 for Arduino: Constructor
-        function obj = Control(comPort, boardType, buttonPin, ledPin)
-            % Constructor: Initialize Arduino monitoring
-            obj.arduinoEStop = ArduinoTest(comPort, boardType, buttonPin, ledPin);
-            obj.arduinoEStop.startMonitoring(); % Start monitoring in the constructor
+
+    methods (Static)
+        function finalShakerPosition = PlotShaker(rbt, qTj, finger, mfinger, currentValue)
+            % Read the shaker mesh data in
+            [f, v, ~] = plyread('ShakerBody.ply', 'tri');
+
+            shakerMesh_h = []; % Initialize the handle for the shaker mesh
+            finalShakerPosition = [];
+            q_f1_end = deg2rad([25, 0]);
+            q_f2_end = deg2rad([25, 0]);
+
+            % Get the initial positions for both fingers
+            q_f1_start = finger.model.getpos();
+            q_f2_start = mfinger.model.getpos();
+
+            % Generate the joint trajectories for each finger
+            q_f1_traj = jtraj(q_f1_start, q_f1_end, size(qTj, 1));
+            q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
+
+            for i = 1:size(qTj, 1)
+                % Pause if currentValue is 1
+                while currentValue == 1
+                    pause(0.1); % Wait until the value changes
+                end
+
+                q = qTj(i, :);
+                rbt.model.animate(q);
+                base = rbt.model.fkineUTS(q);
+
+                % Set the transformed base for each finger and animate
+                finger.model.base = base;
+                finger.model.animate(q_f1_traj(i, :));
+
+                mfinger.model.base = base * trotz(pi);
+                mfinger.model.animate(q_f2_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
+
+                % Get the current shaker position using forward kinematics
+                currentShakerPose = rbt.model.fkine(q);
+                % Adjust shaker position
+                shakerPosition = transl(currentShakerPose);  % Extract translation part (x, y, z)
+                % Store the last Shaker position
+                finalShakerPosition = shakerPosition;
+
+                % Delete the previous shaker plot, if it exists
+                if ishandle(shakerMesh_h)
+                    delete(shakerMesh_h);  % This ensures the mesh is properly deleted
+                end
+
+                % Re-plot the shaker at the new position
+                UpdatedPoints = [v(:, 1) + shakerPosition(1), v(:, 2) + shakerPosition(2), v(:, 3) + shakerPosition(3)];
+                shakerMesh_h = trisurf(f, UpdatedPoints(:, 1), UpdatedPoints(:, 2), UpdatedPoints(:, 3), ...
+                    'FaceColor', 'k', 'EdgeColor', 'none', 'EdgeLighting', 'none');
+
+                % Pause for smooth visualization
+                pause(0.05);
+            end
+
+            % Delete the shaker mesh at the end
+            if ishandle(shakerMesh_h)
+                delete(shakerMesh_h);
+            end
         end
-        %Function 2 """; Destructor
-        function delete(obj)
-            obj.arduinoEStop.stopMonitoring(); % Ensure timer is stopped
-            delete(obj.arduinoEStop); % Delete Arduino object
+
+        function moveToPos(rbt, qTj, finger, mfinger, currentValue)
+            q_f1_end = deg2rad([25, 0]);
+            q_f2_end = deg2rad([25, 0]);
+
+            % Get the initial positions for both fingers
+            q_f1_start = finger.model.getpos();
+            q_f2_start = mfinger.model.getpos();
+
+            % Generate the joint trajectories for each finger
+            q_f1_traj = jtraj(q_f1_start, q_f1_end, size(qTj, 1));
+            q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
+
+            % Loop over the main trajectory
+            for i = 1:size(qTj, 1)
+                % Pause if currentValue is 1
+                while currentValue == 1
+                    pause(0.1); % Wait until the value changes
+                end
+
+                q = qTj(i, :);
+                % Animate the robot model
+                rbt.model.animate(q);
+                % Compute the base transformation for the gripper fingers
+                base = rbt.model.fkineUTS(q);
+
+                % Set the transformed base for each finger and animate
+                finger.model.base = base;
+                finger.model.animate(q_f1_traj(i, :));
+
+                mfinger.model.base = base * trotz(pi);
+                mfinger.model.animate(q_f2_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
+            end
         end
+
+        function finalShakerPosition = PlotShakerShaking(rbt, qTj, shakerHand, currentValue)
+            % Read the shaker mesh data in
+            [f, v, ~] = plyread('ShakerBody.ply', 'tri');
+
+            shakerMesh_h = []; % Initialize the handle for the shaker mesh
+            finalShakerPosition = [];
+            q_shaker_end = deg2rad([25, 0]);
+
+            % Get the initial positions of the shaker hand
+            q_shaker_start = shakerHand.model.getpos();
+
+            % Generate joint trajectory for shaker hand movement
+            q_shaker_traj = jtraj(q_shaker_start, q_shaker_end, size(qTj, 1));
+
+            for i = 1:size(qTj, 1)
+                % Pause if currentValue is 1
+                while currentValue == 1
+                    pause(0.1); % Wait until the value changes
+                end
+
+                q = qTj(i, :);
+                rbt.model.animate(q);
+                base = rbt.model.fkineUTS(q);
+                % Set the transformed base for each finger and animate
+                shakerHand.model.base = base;
+                shakerHand.model.animate(q_shaker_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
+                % Get the current shaker position using forward kinematics
+                currentShakerPose = rbt.model.fkine(q);
+
+                % Adjust shaker position
+                shakerPosition = transl(currentShakerPose);  % Extract translation part (x, y, z)
+
+                % Store the last Shaker position
+                finalShakerPosition = shakerPosition;
+
+                % Delete the previous shaker plot, if it exists
+                if ishandle(shakerMesh_h)
+                    delete(shakerMesh_h);  % This ensures the mesh is properly deleted
+                end
+
+                % Re-plot the shaker at the new position
+                UpdatedPoints = [v(:, 1) + shakerPosition(1), v(:, 2) + shakerPosition(2), v(:, 3) + shakerPosition(3)];
+                shakerMesh_h = trisurf(f, UpdatedPoints(:, 1), UpdatedPoints(:, 2), UpdatedPoints(:, 3), ...
+                    'FaceColor', 'k', 'EdgeColor', 'none', 'EdgeLighting', 'none');
+
+                % Pause for smooth visualization
+                pause(0.05);
+            end
+
+            % Delete the shaker mesh at the end
+            if ishandle(shakerMesh_h)
+                delete(shakerMesh_h);
+            end
+        end
+
+        function moveToPosShaking(rbt, qTj, shakerHand, currentValue)
+            q_shaker_end = deg2rad([25, 0]);
+
+            % Get the initial positions of the shaker hand
+            q_shaker_start = shakerHand.model.getpos();
+
+            % Generate joint trajectory for shaker hand movement
+            q_shaker_traj = jtraj(q_shaker_start, q_shaker_end, size(qTj, 1));
+
+            % Loop over the main trajectory
+            for i = 1:size(qTj, 1)
+                % Pause if currentValue is 1
+                while currentValue == 1
+                    pause(0.1); % Wait until the value changes
+                end
+
+                q = qTj(i, :);
+                % Animate the robot model
+                rbt.model.animate(q);
+                % Compute the base transformation for the gripper fingers
+                base = rbt.model.fkineUTS(q);
+
+                % Set the transformed base for each finger and animate
+                shakerHand.model.base = base;
+                shakerHand.model.animate(q_shaker_traj(i, :));
+
+                % Pause to create a smooth animation
+                pause(0.02);
+            end
+        end
+
+        function qT = CreateTrajectory(rbt, objPos, steps)
+            q = rbt.model.getpos();
+            R = eye(3);  % Identity rotation matrix
+            T = transl(objPos) * [R, [0; 0; 0]; 0 0 0 1];  % Homogeneous transformation
+            q2 = wrapToPi(rbt.model.ikcon(T));
+            qT = jtraj(q, q2, steps);
+        end
+
+        function qT = CreateTrajectoryShaking(rbt, objPos, steps)
+            q = rbt.model.getpos();
+            T = transl(objPos) * trotx(pi) * troty(0) * trotz(0);
+            q2 = wrapToPi(rbt.model.ikcon(T));
+            qT = jtraj(q, q2, steps);
+        end
+    end
+end
+ 
+    
+    
+    %{
+    properties
+    end
+     
+methods (Static)
         function finalShakerPosition = PlotShaker(rbt, qTj,finger,mfinger)
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
@@ -32,10 +235,6 @@ classdef Control < handle
             q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
 
             for i = 1:size(qTj, 1)
-                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
-                    disp('E-stop activated in PlotShaker. Halting movement.');
-                    return; % Exit the movement loop
-                end
                 % if app.Running
                 % if ~app.Running
                 %     break; % Exit loop if app is not running
@@ -104,10 +303,6 @@ classdef Control < handle
 
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
-                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
-                    disp('E-stop activated in moveToPos. Halting movement.');
-                    return; % Exit loop if E-stop is activated
-                end
 
                 q = qTj(i, :);
                 % Animate the robot model
@@ -147,10 +342,6 @@ classdef Control < handle
 
 
             for i = 1:size(qTj, 1)
-                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
-                    disp('E-stop activated in PlotShakerShaking. Halting movement.');
-                    return; % Exit the movement loop
-                end
 
                 q = qTj(i, :);
                 rbt.model.animate(q);
@@ -200,7 +391,6 @@ classdef Control < handle
 
         function  moveToPosShaking(rbt,qTj,shakerHand)
 
-
             q_shaker_end = deg2rad([25, 0]);
 
             % Get the initial positions of the shaker hand
@@ -212,10 +402,6 @@ classdef Control < handle
 
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
-                if obj.arduinoEStop.isStopped() % Check if E-stop is activated
-                    disp('E-stop activated in moveToPosShaking. Halting movement.');
-                    return; % Exit loop if E-stop is activated
-                end
 
                 q = qTj(i, :);
                 % Animate the robot model
@@ -234,9 +420,9 @@ classdef Control < handle
             end
         end
 
-    end
+
     
-    methods (Static)
+
     function qT = CreateTrajectory(rbt,objPos,steps) %,armManipulate)
             % %steps = 200;%100
             % q = rbt.model.getpos();
@@ -265,7 +451,7 @@ classdef Control < handle
     end
 end
 
-
+    %}
 
 % function  moveToPos(rbt,qTj)
 %
@@ -303,4 +489,4 @@ end
 %
 %         pause(0.05);
 %     end
-% end
+% 
