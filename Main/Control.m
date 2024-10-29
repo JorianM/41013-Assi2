@@ -23,8 +23,8 @@ classdef Control < handle
 
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-    if currentValue == 1
-        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+   if currentValue == 1 && i~=1
+        i = i - 1; % Stay at the current step, ensuring i >= 1
         pause(0.1);        % Small pause to reduce CPU load
         continue;          % Skip the rest of this loop iteration
     end
@@ -85,8 +85,8 @@ classdef Control < handle
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-    if currentValue == 1
-        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+   if currentValue == 1 && i~=1
+        i = i - 1; % Stay at the current step, ensuring i >= 1
         pause(0.1);        % Small pause to reduce CPU load
         continue;          % Skip the rest of this loop iteration
     end
@@ -126,8 +126,8 @@ classdef Control < handle
 
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-    if currentValue == 1
-        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+   if currentValue == 1 && i~=1
+        i = i - 1; % Stay at the current step, ensuring i >= 1
         pause(0.1);        % Small pause to reduce CPU load
         continue;          % Skip the rest of this loop iteration
     end
@@ -183,8 +183,8 @@ classdef Control < handle
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
                 % Pause if currentValue is 1
-    if currentValue == 1
-        i = max(1, i - 1); % Stay at the current step, ensuring i >= 1
+   if currentValue == 1 && i~=1
+        i = i - 1; % Stay at the current step, ensuring i >= 1
         pause(0.1);        % Small pause to reduce CPU load
         continue;          % Skip the rest of this loop iteration
     end
