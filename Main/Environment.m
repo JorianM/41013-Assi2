@@ -3,14 +3,10 @@ classdef Environment < handle
     %   Detailed explanation goes here
 
     properties
-        % Property1
-
-
-
     end
 
     methods (Static)
-        function [p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1] = simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
+        function [p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1,w1] = simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
             %workspace = [-5 5 -5 5 -0.02 4.5];
             workspace =[-2.5 2.5 -2 2 -0.02 5];
             axis(workspace);
@@ -168,8 +164,6 @@ classdef Environment < handle
             g1Trans = g1Trans(1:3, :)' + g1Pos;
             set(g1, 'Vertices', g1Trans);
 
-
-
             %place Estop
             e1 = PlaceObject('emergencyStopButton.ply', EStopPOS);
 
@@ -180,4 +174,3 @@ classdef Environment < handle
         end
     end
 end
-
