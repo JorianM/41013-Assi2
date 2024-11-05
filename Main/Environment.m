@@ -7,7 +7,7 @@ classdef Environment < handle
 
     methods (Static)
         function [p1,s1,b1,b2,b3,b4,b5,b6,L1,L2,g1,e1,f1,w1] = simEnvironment(tablePOS,ShakerPOS,Bottle1POS,Bottle2POS,Bottle3POS,Button1POS,Button2POS,Button3POS,LightCurt1POS,LightCurt2POS,GlassPOS,EStopPOS,FextPOS);
-            %workspace = [-5 5 -5 5 -0.02 4.5];
+%% set basic parameters
             workspace =[-2.5 2.5 -2 2 -0.02 5];
             axis(workspace);
             view([43.5,17.35]);
@@ -20,10 +20,8 @@ classdef Environment < handle
             LightScale = 0.005;
             GlassScale = 0.003;
 
-            % Place Floor
+%% Place Floor
             f1 = imread('Woodflr.jpeg');
-            % xImage = [self.workspace(1) self.workspace(2); self.workspace(1) self.workspace(2)];   % x data (constant)
-            % yImage = [self.workspace(3) self.workspace(3); self.workspace(4) self.workspace(4)];   % y data (min to max of the workspace)
             xImage = [workspace(1) workspace(2); workspace(1) workspace(2)];   % x data (constant)
             yImage = [workspace(3) workspace(3); workspace(4) workspace(4)];   % y data (min to max of the workspace)
             zImage = [0 0; 0 0];           % z data (min to max of the workspace)
@@ -33,7 +31,7 @@ classdef Environment < handle
             %Place table
             p1= PlaceObject('tableBrown2.1x1.4x0.5m.ply',tablePOS);
 
-            %Place shaker
+%% Place shaker
             s1= PlaceObject('ShakerBody.ply',ShakerPOS);
             s1verts = get(s1, 'Vertices');
             s1Pos = ShakerPOS;
@@ -44,20 +42,9 @@ classdef Environment < handle
             set(s1, 'Vertices', s1Trans);
 
 
-            % Place Bar1
+%% Place Bar1 and scale to correct size
             [f,v,data] = plyread('Bar.ply','tri'); % Load the bar object with vertex data
-
-            % Check if the file contains color information
-            % if isfield(data, 'vertex') && isfield(data.vertex, 'red')
-            %     % Scale the colors to be 0-to-1 (they are originally 0-to-255)
-            %     vertexColors = [data.vertex.red, data.vertex.green, data.vertex.blue] / 255;
-            %     disp("has colour")
-            % else
-            % If no color info, use a default color (e.g., grey)
             vertexColors = repmat([0.396, 0.263, 0.129], size(v, 1), 1); % Grey color
-            %     disp("No colour")
-            % end
-
             scaling_factor = 0.025;
             v = v * scaling_factor;
             O1RM = trotx(-pi/2); % Create rotation matrix
@@ -71,19 +58,19 @@ classdef Environment < handle
             camlight('headlight');
             lighting gouraud;
 
-
-            %place bottles
+%% Place bottles
+            %Bottle 1
             b1 = PlaceObject('KrakenBottle.ply', Bottle1POS);
             b1verts = get(b1, 'Vertices');
             b1Pos = Bottle1POS;
             b1centred = b1verts - b1Pos;
             b1RM = trotx(-pi/2);  % Rotation by 90 degrees around Y-axis
             b1Rotated = (b1RM(1:3, 1:3) * b1centred')';
-            % b1Scaled = b1Rotated * self.BottleScale;  % Scale the rotated vertices
             b1Scaled = b1Rotated * BottleScale;  % Scale the rotated vertices
             b1Trans = b1Scaled + b1Pos;
             set(b1, 'Vertices', b1Trans);
 
+            %Bottle 2
             b2 = PlaceObject('KrakenBottle.ply', Bottle2POS);
             b2verts = get(b2, 'Vertices');
             b2Pos = Bottle2POS;
@@ -94,6 +81,7 @@ classdef Environment < handle
             b2Trans = b2Scaled + b2Pos;
             set(b2, 'Vertices', b2Trans);
 
+            %Bottle 3
             b3 = PlaceObject('KrakenBottle.ply', Bottle3POS);
             b3verts = get(b3, 'Vertices');
             b3Pos = Bottle3POS;
@@ -104,7 +92,8 @@ classdef Environment < handle
             b3Trans = b3Scaled + b3Pos;
             set(b3, 'Vertices', b3Trans);
 
-            %place buttons
+%% Place buttons
+            %Button 1
             b4 = PlaceObject('Button.ply',Button1POS);
             b4verts = get(b4, 'Vertices');
             b4Pos = Button1POS;
@@ -113,6 +102,7 @@ classdef Environment < handle
             b4Trans = b4Scaled + b4Pos;
             set(b4, 'Vertices', b4Trans);
 
+            %Button 2
             b5 = PlaceObject('Button.ply', Button2POS);
             b5verts = get(b5, 'Vertices');
             b5Pos = Button2POS;
@@ -121,6 +111,7 @@ classdef Environment < handle
             b5Trans = b5Scaled + b5Pos;
             set(b5, 'Vertices', b5Trans);
 
+            %Button 3
             b6 = PlaceObject('Button.ply', Button3POS);
             b6verts = get(b6, 'Vertices');
             b6Pos = Button3POS;
@@ -129,7 +120,8 @@ classdef Environment < handle
             b6Trans = b6Scaled + b6Pos;
             set(b6, 'Vertices', b6Trans);
 
-            %Place Light Curtains
+%% Place Light Curtains
+            %Light Curtain 1
             L1 = PlaceObject('LightCurt.ply', LightCurt1POS);
             L1verts = get(L1, 'Vertices');
             L1Pos = LightCurt1POS;
@@ -141,6 +133,7 @@ classdef Environment < handle
             L1Trans = L1Trans + L1Pos;
             set(L1, 'Vertices', L1Trans);
 
+            %Light Curtain 2
             L2 = PlaceObject('LightCurt.ply', LightCurt2POS);
             L2verts = get(L2, 'Vertices');
             L2Pos = LightCurt2POS;
@@ -152,7 +145,7 @@ classdef Environment < handle
             L2Trans = L2Trans + L2Pos;
             set(L2, 'Vertices', L2Trans);
 
-            %Place Glass
+%% Place Glass
             g1 = PlaceObject('Glass.ply', GlassPOS);
             g1verts = get(g1, 'Vertices');
             g1Pos = GlassPOS;
@@ -164,10 +157,10 @@ classdef Environment < handle
             g1Trans = g1Trans(1:3, :)' + g1Pos;
             set(g1, 'Vertices', g1Trans);
 
-            %place Estop
+%% Place Estop
             e1 = PlaceObject('emergencyStopButton.ply', EStopPOS);
 
-            %place Fireextinguisher
+%% Place Fireextinguisher
             f1 = PlaceObject('fireExtinguisher.ply', FextPOS);
 
 

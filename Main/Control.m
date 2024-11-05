@@ -269,7 +269,7 @@ classdef Control < handle
                 endETestz = base(3,4);
 
                 if (endETestx < LightCurtPOS1(1,1)) && (endETestx > LightCurtPOS2(1,1)) && (endETesty < LightCurtPOS1(1,2)) &&(endETesty > LightCurtPOS2(1,2)) && (endETestz > LightCurtPOS1(1,3)) &&(endETestz < LightCurtPOS2(1,3))
-                    % % Calculate end effector position based on joint angles
+                    % Calculate end effector position based on joint angles
                     disp(['Collision detected at step ' num2str(i)]);
                     collisionFound = true;
                     break;
