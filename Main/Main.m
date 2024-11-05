@@ -1,6 +1,6 @@
-% clear all;
-% clf;
-% clc;
+clear all;
+clf;
+clc;
 
 %initiallise classes d
 % env=Environment();% not really needed
@@ -102,28 +102,16 @@ finger = RG2Finger(baseTransform);                     % Transformation for fing
 mfinger = RG2Finger(baseTransform * trotz(pi));         % Transformation for finger2, rotated 180° around z-axis
 
 %% Ikcon values to manipulate the arms position
-% toShakerAvoidTable = deg2rad([0 0 0 -90 0 90 0]);
 
+comPort = "/dev/cu.usbmodem14101"; % Adjust to your Arduino COM port
+baudRate = 9600; % Set the baud rate (must match Arduino sketch)
 
-%% Initialize Arduino E-stop
-% % comPort = "/dev/cu.usbmodem14101"; % Adjust to your Arduino COM port
-% % boardType = 'Uno'; % Change if you're using a different board
-% % buttonPin = 'D2'; % Pin for the pushbutton
-% % ledPin = 'D13'; % Pin for the LED
-% % arduinoEStop = ArduinoTest(comPort, boardType, buttonPin, ledPin);
-% % arduinoEStop.startMonitoring(); % Start monitoring the button
-% % 
-% % pause(100);
-% 
-% comPort = "/dev/cu.usbmodem14101"; % Adjust to your Arduino COM port
-% baudRate = 9600; % Set the baud rate (must match Arduino sketch)
-% %global stopFlag;
-% %stopFlag = False;
-% % Create an instance of the ArduinoTest class
-% ard = ArduinoTest(comPort, baudRate);
-% 
-% 
-% pause(30);
+% Create an instance of the ArduinoTest class
+try
+ard = ArduinoTest(comPort, baudRate);
+catch ME
+end
+pause(30);
 
 %% Light curtain 
 Control.lightCurtain(robot1,LightCurt1RbtKill, steps_long, finger, mfinger, LightCurt1POS1, LightCurt1POS2);
