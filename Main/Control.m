@@ -2,9 +2,10 @@ classdef Control < handle
     properties
     end
     methods (Static)
-
+%% Function for plotting LinearUR10 & Gripper with moving ply file
         function finalShakerPosition = PlotShaker(rbt, qTj,finger,mfinger)
             global currentValue;
+
             % Read the shaker mesh data in
             [f, v, ~] = plyread('ShakerBody.ply', 'tri');
 
@@ -22,33 +23,26 @@ classdef Control < handle
             q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
 
             for i = 1:size(qTj, 1)
-                % Pause if currentValue is 1
+                %For each loop check to see if button has been pressed
                 if (any(currentValue == 1)) && (i ~= 1)
                     i = i - 1; % Stay at the current step, ensuring i >= 1
-                    pause(0.1);        % Small pause to reduce CPU load
+                    pause(0.1);
                     continue;          % Skip the rest of this loop iteration
                 end
-                % if app.Running
-                % if ~app.Running
-                %     break; % Exit loop if app is not running
-                % end
+
                 q = qTj(i, :);
                 rbt.model.animate(q);
                 base = rbt.model.fkineUTS(q);
-                % Set the transformed base for each finger and animate
-                finger.model.base = base;% * trotx(pi/2);
-                finger.model.animate(q_f1_traj(i, :));
 
-                mfinger.model.base = base * trotz(pi);% * troty(pi) * trotx(-pi/2);
+                % Set the transformed base for each finger and animate
+                finger.model.base = base;
+                finger.model.animate(q_f1_traj(i, :));
+                mfinger.model.base = base * trotz(pi);
                 mfinger.model.animate(q_f2_traj(i, :));
 
                 % Pause to create a smooth animation
                 pause(0.02);
-                %     for i = 1:size(qTj,1)
-                %         q = qTj(i,:);
-                %         rbt.model.animate(q);
-                %
-                %         pause(0.05)
+
                 % Get the current shaker position using forward kinematics
                 currentShakerPose = rbt.model.fkine(q);
 
@@ -71,8 +65,6 @@ classdef Control < handle
 
                 % Pause for smooth visualization
                 pause(0.05);
-                % startWorkerMovement();
-                % end
             end
 
             % Delete the shaker mesh at the end
@@ -82,24 +74,8 @@ classdef Control < handle
 
         end
 
-
-
-        function qT = CreateTrajectory(rbt,objPos,steps) %,armManipulate)
-            % %steps = 200;%100
-            % q = rbt.model.getpos();
-            % T = transl(objPos)*trotx(pi)*troty(0)*trotz(0)
-            % % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
-            % q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
-            % qT = jtraj(q,q2,steps);
-
-            q = rbt.model.getpos();
-            R = eye(3);  % Identity rotation matrix
-            T = transl(objPos) * [R, [0; 0; 0]; 0 0 0 1];  % Homogeneous transformation
-            q2 = wrapToPi(rbt.model.ikcon(T));
-            qT = jtraj(q, q2, steps);
-        end
-        function qT = CreateTrajectoryShaking(rbt,objPos,steps)% will remove probs
-            %steps = 200;%100
+%% Function for determining trajectory of robot from current position to next position
+        function qT = CreateTrajectory(rbt,objPos,steps) %
             q = rbt.model.getpos();
             T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
             % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
@@ -107,6 +83,7 @@ classdef Control < handle
             qT = jtraj(q,q2,steps);
         end
 
+%% Function for plotting LinearUR10 & Gripper (Without Ply file)
         function  moveToPos(rbt,qTj,finger,mfinger)
             global currentValue;
             q_f1_end = deg2rad([25, 0]);
@@ -141,8 +118,7 @@ classdef Control < handle
             end
         end
 
-
-
+%% Function for plotting Jaka Zu 3 & Gripper with moving ply file
         function finalShakerPosition = PlotShakerShaking(rbt, qTj,shakerHand)
             global currentValue;
             % Read the shaker mesh data in
@@ -156,15 +132,14 @@ classdef Control < handle
             q_shaker_start = shakerHand.model.getpos();
 
             % Generate joint trajectory for shaker hand movement
-            % q_shaker_traj = jtraj(q_shaker_start, size(qTj, 1));
             q_shaker_traj = jtraj(q_shaker_start, q_shaker_end, size(qTj, 1));
 
 
             for i = 1:size(qTj, 1)
-                % Pause if currentValue is 1
                 if (any(currentValue == 1)) && (i ~= 1)
                     i = i - 1; % Stay at the current step, ensuring i >= 1
-                    pause(0.1);        % Small pause to reduce CPU load
+                    pause(0.1);
+
                     continue;          % Skip the rest of this loop iteration
                 end
                 q = qTj(i, :);
@@ -176,11 +151,7 @@ classdef Control < handle
 
                 % Pause to create a smooth animation
                 pause(0.02);
-                %     for i = 1:size(qTj,1)
-                %         q = qTj(i,:);
-                %         rbt.model.animate(q);
-                %
-                %         pause(0.05)
+               
                 % Get the current shaker position using forward kinematics
                 currentShakerPose = rbt.model.fkine(q);
 
@@ -200,7 +171,6 @@ classdef Control < handle
                 shakerMesh_h = trisurf(f, UpdatedPoints(:, 1), UpdatedPoints(:, 2), UpdatedPoints(:, 3), ...
                     'FaceColor', 'k', 'EdgeColor', 'none', 'EdgeLighting', 'none');
 
-
                 % Pause for smooth visualization
                 pause(0.05);
             end
@@ -212,10 +182,9 @@ classdef Control < handle
 
         end
 
-
+%% Function for plotting Jaka Zu 3 & Gripper (No Ply file)
         function  moveToPosShaking(rbt,qTj,shakerHand)
             global currentValue;
-
 
             q_shaker_end = deg2rad([25, 0]);
 
@@ -223,15 +192,14 @@ classdef Control < handle
             q_shaker_start = shakerHand.model.getpos();
 
             % Generate joint trajectory for shaker hand movement
-            % q_shaker_traj = jtraj(q_shaker_start, size(qTj, 1));
             q_shaker_traj = jtraj(q_shaker_start, q_shaker_end, size(qTj, 1));
 
             % Loop over the main trajectory
             for i = 1:size(qTj, 1)
-                % Pause if currentValue is 1
+
                 if (any(currentValue == 1)) && (i ~= 1)
                     i = i - 1; % Stay at the current step, ensuring i >= 1
-                    pause(0.1);        % Small pause to reduce CPU load
+                    pause(0.1);
                     continue;          % Skip the rest of this loop iteration
                 end
                 q = qTj(i, :);
@@ -241,14 +209,10 @@ classdef Control < handle
 
                 % Compute the base transformation for the gripper fingers
                 base = rbt.model.fkineUTS(q);
-                % baseTransform = base * transl(0, 0, 0.1) * trotz(pi/2);
 
                 % Set the transformed base for each finger and animate
-
                 shakerHand.model.base = base;
                 shakerHand.model.animate(q_shaker_traj(i, :));
-
-
 
                 % Pause to create a smooth animation
                 pause(0.02);
@@ -256,8 +220,8 @@ classdef Control < handle
             end
         end
 
-
-        function lightCurtain(rbt,objPos,steps, finger, mfinger, LightCurtPOS1,LightCurtPOS2)%workerPos, workerSpeed, targetPos)
+%% Function To place in rectangle to set up boundaries
+        function lightCurtain(rbt,objPos,steps, finger, mfinger, LightCurtPOS1,LightCurtPOS2)
             global currentValue;
             % Put into enviro
             [v, f, fn] = Control.RectangularPrism(LightCurtPOS1,LightCurtPOS2);%[2, -1.1, -1], [3, 1.1, 1]);
@@ -266,55 +230,47 @@ classdef Control < handle
             q = rbt.model.getpos();
             q1 = q;
             T = transl(objPos)*trotx(pi)*troty(0)*trotz(0);
-            % T = transl(objPos+[0,0,0.2])*trotx(pi)*troty(0)*trotz(0);
             q2 = wrapToPi(rbt.model.ikcon(T));%,armManipulate));
             qTj = jtraj(q1,q2,steps);
-
             q_f1_end = deg2rad([25, 0]);
             q_f2_end = deg2rad([25, 0]);
+
             % Get the initial positions for both fingers
             q_f1_start = finger.model.getpos();
             q_f2_start = mfinger.model.getpos();
+
             % Generate the joint trajectories for each finger
             q_f1_traj = jtraj(q_f1_start, q_f1_end, size(qTj, 1));
             q_f2_traj = jtraj(q_f2_start, q_f2_end, size(qTj, 1));
 
-            %
+            % Set Variable to false
             collisionFound = false;
-            % for step = 1:length(qTj)
+
             for i = 1:steps
-                % Pause if currentValue is 1
+
                 if (any(currentValue == 1)) && (i ~= 1)
                     i = i - 1; % Stay at the current step, ensuring i >= 1
-                    pause(0.1);        % Small pause to reduce CPU load
-                    continue;          % Skip the rest of this loop iteration
+                    pause(0.1);
+                    continue;  % Skip the rest of this loop iteration
                 end
                 q = qTj(i, :);
                 base = rbt.model.fkineUTS(q);
-                finger.model.base = base;% * trotx(pi/2);
+                finger.model.base = base;
                 finger.model.animate(q_f1_traj(i, :));
-                mfinger.model.base = base * trotz(pi);% * troty(pi) * trotx(-pi/2);
+                mfinger.model.base = base * trotz(pi);
                 mfinger.model.animate(q_f2_traj(i, :));
-                % Pause to create a smooth animation
+
                 pause(0.02);
                 rbt.model.animate(q);
-                %ende
-                % endETestx = base(1,4);
-                % endETesty = base(2,4);
-                % endETestz = base(3,4);
+
                 %hand
                 endETestx = base(1,4);
                 endETesty = base(2,4);
                 endETestz = base(3,4);
 
-                % if (endETestx < 1.6) && (endETestx > -1.6) && (endETesty <-0.98) &&(endETesty > -1.12)
                 if (endETestx < LightCurtPOS1(1,1)) && (endETestx > LightCurtPOS2(1,1)) && (endETesty < LightCurtPOS1(1,2)) &&(endETesty > LightCurtPOS2(1,2)) && (endETestz > LightCurtPOS1(1,3)) &&(endETestz < LightCurtPOS2(1,3))
                     % % Calculate end effector position based on joint angles
-                    % endEffectorPos =  rbt.model.fkineUTS(q) % Implement this function
-
-                    % if Control.IsCollision(rbt, qTj(i, :), f, v, fn, false)
                     disp(['Collision detected at step ' num2str(i)]);
-                    % disp(['Pose at step ' num2str(i) ' is: q = [' num2str(qTj(i,1)) ' ' num2str(qMatrix(i,2)) ' ' num2str(qMatrix(i,3)) ']']);
                     collisionFound = true;
                     break;
                 end
@@ -329,7 +285,7 @@ classdef Control < handle
         end
 
 
-        %% Rectangle
+%% Rectangle
         function [vertex,face,faceNormals] = RectangularPrism(lower,upper,plotOptions,axis_h)
             if nargin<4
                 axis_h=gca;
