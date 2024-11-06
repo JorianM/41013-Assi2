@@ -59,6 +59,10 @@ hold on
 
 
 %%  Plot Jaka Zu 3 Robot 2
+workspace =[-2.5 2.5 -2 2 -0.02 5];
+            axis(workspace);
+            view([43.5,17.35]);
+            camzoom(1);
 robot2 = JakaZu3(transl(0,0,3)*troty(pi));  % Initialize robot1 as Jaka Zu 3
 
 %Rotate Robot to be on ceiling
@@ -69,6 +73,10 @@ baseTransform = base * trotz(pi/2);
 shakerHand = ShakerHand(baseTransform);
 
 %%  Plot LinearUR10 Robot 1
+workspace =[-2.5 2.5 -2 2 -0.02 5];
+            axis(workspace);
+            view([43.5,17.35]);
+            camzoom(1);
 robot1 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
 
 %Transform robot to be on table.
@@ -81,7 +89,7 @@ baseTransform = base * trotz(pi/2);
 finger = RG2Finger(baseTransform);                % Transformation for finger1
 mfinger = RG2Finger(baseTransform * trotz(pi));   % Transformation for finger2, rotated 180° around z-axis
 
-% %% Initialise Arduino
+%% Initialise Arduino - Uncomment section for arduino useage.
 % comPort = "/dev/cu.usbmodem14101"; % Adjust to compatible Arduino COM port
 % baudRate = 9600; % Set the baud rate (must match Arduino sketch)
 % 
