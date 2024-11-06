@@ -69,10 +69,6 @@ baseTransform = base * trotz(pi/2);
 shakerHand = ShakerHand(baseTransform);
 
 %%  Plot LinearUR10 Robot 1
-workspace =[-2.5 2.5 -2 2 -0.02 5];
-axis(workspace);
-view([43.5,17.35]);
-camzoom(1);
 robot1 = LinearUR10(transl(0,0,0.5));  % Initialize robot2 as LinearUR10
 
 %Transform robot to be on table.
@@ -85,16 +81,16 @@ baseTransform = base * trotz(pi/2);
 finger = RG2Finger(baseTransform);                % Transformation for finger1
 mfinger = RG2Finger(baseTransform * trotz(pi));   % Transformation for finger2, rotated 180° around z-axis
 
-%% Initialise Arduino
-comPort = "/dev/cu.usbmodem14101"; % Adjust to compatible Arduino COM port
-baudRate = 9600; % Set the baud rate (must match Arduino sketch)
-
-% Create an instance of the ArduinoTest class
-try
-ard = ArduinoTest(comPort, baudRate);
-catch ME
-end %Will only connect if arduino attached.
-pause(30);
+% %% Initialise Arduino
+% comPort = "/dev/cu.usbmodem14101"; % Adjust to compatible Arduino COM port
+% baudRate = 9600; % Set the baud rate (must match Arduino sketch)
+% 
+% % Create an instance of the ArduinoTest class
+% try
+% ard = ArduinoTest(comPort, baudRate);
+% catch ME
+% end %Will only connect if arduino attached.
+% pause(30);
 
 %% Light curtain 
 Control.lightCurtain(robot1,LightCurt1RbtKill, steps_long, finger, mfinger, LightCurt1POS1, LightCurt1POS2);
@@ -168,7 +164,7 @@ try delete(s1);
 catch ME
 end
 s1NewPos = Control.PlotShaker(robot1,qTj,finger,mfinger);
-s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
+% s1 = PlaceObject('ShakerBody.ply', transl(s1NewPos));
 pause(0.01);
 %% Move to Handoff
 qTj = Control.CreateTrajectory(robot1, HandoffPos,steps_short);
